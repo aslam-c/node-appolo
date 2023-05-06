@@ -22,10 +22,11 @@ const typeDefs = gql`
    type User{
     id: Int
     name: String
-    username: String
     email: String
    }
-
+   type Mutation { 
+    createUser(name:String,email:String):String
+   }
 `;
 
 // Provide resolver functions for your schema fields
@@ -33,7 +34,6 @@ const resolvers = {
   Query: {
     hello: () => 'Hello world!',
     todos:(parent,args)=>{
-    console.log(args.status)
     const selected=todos.filter(todo=>todo.verified==args.status)
     return selected   
 },
@@ -48,11 +48,18 @@ restaurantCount:async (parent,args,ctx,info)=>{
 users:async(parent,args,ctx,info)=>{
   const {limit}=args
   const usersList=await ctx.dataSources.getDummyUserData()
-  console.log(usersList)
   return usersList.slice(0,limit)
 
 }
 },
+Mutation:{
+  createUser:(parent,args,ctx)=>{
+    const {name,email}=args
+    let r = (Math.random() + 1).toString(36).substring(7);
+
+    return r
+  }
+}
 
 };
 
