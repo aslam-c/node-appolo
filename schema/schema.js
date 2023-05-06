@@ -11,11 +11,19 @@ const typeDefs = gql`
     hello: String
     todos(status:Boolean):[Todo]
     restaurantCount(area:String!):Int
-  }
+    users(limit:Int):[User]
+    }
 
   type Todo{
     name:String
     verified:Boolean
+   }
+   
+   type User{
+    id: Int
+    name: String
+    username: String
+    email: String
    }
 
 `;
@@ -29,10 +37,20 @@ const resolvers = {
     const selected=todos.filter(todo=>todo.verified==args.status)
     return selected   
 },
-restaurantCount:async (parent,args)=>{
+restaurantCount:async (parent,args,ctx,info)=>{
+    if(!ctx.isAuthenticated){
+      return null
+    }
     const selectedArea=args.area
     const records= await Restaurant.countDocuments({borough:selectedArea})
     return records
+},
+users:async(parent,args,ctx,info)=>{
+  const {limit}=args
+  const usersList=await ctx.dataSources.getDummyUserData()
+  console.log(usersList)
+  return usersList.slice(0,limit)
+
 }
 },
 

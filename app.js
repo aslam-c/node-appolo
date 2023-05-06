@@ -1,6 +1,11 @@
 const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');
 const {resolvers,typeDefs}=require("./schema/schema")
+const {GraphQLError}=require("graphql")
+
+//datasources
+const {getDummyUserData}=require("./datasources/DummyUserDataSource")
+
 
 const todos=[{"title":"stawrwert Gql","name":"applwwwy portal","task":"Buy apwwple"},
 {"title":"starts Gql","name":"applwwwy portal","task":"Buy appwwle"},
@@ -8,7 +13,11 @@ const todos=[{"title":"stawrwert Gql","name":"applwwwy portal","task":"Buy apwwp
 
 // Construct a schema, using GraphQL schema language
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({ typeDefs, resolvers,context:({req,res})=>{
+  
+  return {dataSources:{getDummyUserData}}
+
+} });
 
 const app = express();
 const startServer=async ()=>{
